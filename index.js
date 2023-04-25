@@ -1,3 +1,3 @@
 console.clear();
 const express = require("express");
-console.log(typeof express);
+console.log("Type: ", typeof express);
