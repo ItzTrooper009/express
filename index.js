@@ -11,6 +11,10 @@ const dbDebugger = require("debug")("app:db");
 
 const app = express();
 
+//pug
+// app.set("view engine", pug);
+// app.set("views", "./views");
+
 if (app.get("env") === "development") {
   app.use(morgan("tiny"));
   startupDebugger("Morgan Runnig...");
