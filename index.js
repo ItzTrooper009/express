@@ -1,10 +1,41 @@
 console.clear();
 const Joi = require("joi");
 const express = require("express");
+const logger = require("./logger");
+const auth = require("./auth");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const config = require("config");
+const startupDebugger = require("debug")("app:startup");
+const dbDebugger = require("debug")("app:db");
 
 const app = express();
 
+if (app.get("env") === "development") {
+  app.use(morgan("tiny"));
+  startupDebugger("Morgan Runnig...");
+}
+
+console.log("Configuration Name :", config.get("name"));
+if (app.get("env") === "development" || app.get("env") === "production") {
+  console.log("Mail Server :", config.get("mail.host"));
+  console.log("Mail Password :", config.get("mail.password"));
+}
+
+//Debuggers
+dbDebugger("Demo DB Debugger");
+startupDebugger("Demo Startup Debugger");
+
+// console.log(process.env.NODE_ENV);
+console.log("NODE_ENV : ", app.get("env"));
+
+//Middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(helmet());
+// app.use(auth);
+// app.use(logger);
 
 const customers = [
   {
@@ -91,4 +122,6 @@ app.delete("/api/customer/:id", (req, res) => {
   res.send(customer);
 });
 
-app.listen(3000, () => console.log("Listening on port 3000..."));
+process.env.PORT = 3000;
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Listening on port ${port}...`));
